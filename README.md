@@ -1,128 +1,108 @@
-# Pokémon API Template
+# 🐾 Pokémon API Template
 
-A clean architecture implementation of a Pokémon API that provides CRUD operations and evolution tracking for Pokémon data.
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.68.0+-green.svg)](https://fastapi.tiangolo.com/)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean-brightgreen.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
-## Features
+A robust implementation of a Pokémon API built with FastAPI, leveraging Clean Architecture principles for a maintainable and scalable codebase.
 
-- ✅ Create, Read, Update, Delete Pokémon
-- ✅ Track Pokémon evolutions
-- ✅ Clean architecture design
-- ✅ Type-safe with Pydantic models
-- ✅ Well-structured codebase with separation of concerns
+## 📑 Table of Contents
 
-## Project Structure
+- [Description](#-description)
+- [Architecture](#-architecture)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Development](#-development)
+- [License](#-license)
 
-```
-template/
+## 📝 Description
+
+This project demonstrates Clean Architecture in a Python FastAPI application with the following principles:
+
+1. **Framework Independence**: System operates independently of external libraries or frameworks
+2. **Testability**: Business rules can be validated without external elements
+3. **UI Independence**: User interface changes don't affect the underlying system
+4. **Database Independence**: Business logic remains separate from database implementation
+5. **External Agency Independence**: Business logic is agnostic to external integrations
+
+### ✨ Additional Features and Patterns
+
+This project incorporates modern adaptations of Clean Architecture principles:
+
+- **GraphQL vs HTTP**:  
+  The `entrypoints` module offers both GraphQL and RESTful API interfaces
+
+- **RelationalDB vs NoSQL**:  
+  The `repositories` module supports both relational databases (SQLite, MySQL, PostgreSQL) and NoSQL options (MongoDB, Redis)
+
+Additionally, the project implements:
+
+- **Repository Pattern**:  
+  Abstracts data storage from the model layer, promoting flexibility and maintainability
+
+- **Unit of Work Pattern**:  
+  Ensures transactional integrity across operations
+
+- **Dependency Injection Pattern**:  
+  Reduces direct dependencies between code modules, increasing testability
+
+- **Asynchronous SQLalchemy**:  
+  Utilizes SQLAlchemy 2.0's async capabilities for optimized database operations
+
+## 🏗️ Architecture
+
+This project follows clean architecture principles with distinct layers:
+
+- **Models**: Domain entities and core business logic
+- **Repositories**: Data access abstraction layer
+- **Entrypoints**: API endpoints and request/response handling  
+- **Mappers**: Conversion between API schemas and domain models
+
+## 🧱 Project Structure Overview
+
+Based on Uncle Bob's Clean Architecture principles, this project's structure and architecture flow diagrams are aligned with these principles.
+
+#### Directory Structure
+
+Here's a glimpse of the project's high-level structure, highlighting primary directories and key files:
+
+```ini
+./
+├── ...
 ├── src/
-│   ├── common/                # Common utilities and types
-│   ├── entrypoints/           # API entry points
-│   │   └── http/              # HTTP API implementation
-│   │       └── pokemon/       # Pokémon endpoints
-│   ├── models/                # Domain models
-│   └── repositories/          # Data access layer
-├── tests/                     # Test suite
-└── README.md                  # This file
+│   ├── di/                   - Dependency injection configurations for managing dependencies.
+│   │   ├── dependency_injection.py
+│   │   └── unit_of_work.py
+│   │
+│   ├── entrypoints/          - External interfaces like HTTP & GraphQL endpoints.
+│   │   ├── graphql/          - GraphQL components for a flexible API.
+│   │   └── http/             - RESTful API routes and controllers.
+│   │                           ('Frameworks and Drivers' and part of 'Interface Adapters' in Clean Architecture)
+│   │
+│   ├── usecases/             - Contains application-specific business rules and implementations.
+│   │                           ('Use Cases' in Clean Architecture)
+│   │
+│   ├── repositories/         - Data interaction layer, converting domain data to/from database format.
+│   │   ├── relational_db/    - Operations for relational databases (e.g., SQLite, MySQL, PostgreSQL).
+│   │   ├── document_db/      - Operations for document-oriented databases (e.g., MongoDB, CouchDB).
+│   │   └── key_value_db/     - Operations for key-value databases (e.g., Redis, Memcached).
+│   │                           ('Interface Adapters' in Clean Architecture)
+│   │
+│   ├── models/               - Domain entities representing the business data.
+│   │                           ('Entities' in Clean Architecture)
+│   │
+│   ├── common/               - Shared code and utilities.
+│   ├── settings/
+│   │   └── db/               - Database configurations.
+│   │                           ('Frameworks and Drivers' in Clean Architecture)
+│   │
+│   └── main.py               - Main file to launch the application.
+│
+└── tests/
+    ├── api_db_test.bats      - BATs tests for API and database interactions.
+    ├── functional/           - Functional tests for testing the overall functionality and behavior of the application.
+    ├── integration/          - Integration tests for testing module interactions.
+    └── unit/                 - Unit tests for testing individual components in isolation.
 ```
 
-## Architecture
-
-This project follows clean architecture principles:
-
-- **Models**: Domain entities and business logic
-- **Repositories**: Data access layer
-- **Entrypoints**: API endpoints and request/response handling
-- **Mappers**: Convert between API schemas and domain models
-
-## Installation
-
-### Prerequisites
-
-- Python 3.8+
-- pip
-
-### Setup
-
-1. Clone the repository
-```bash
-git clone https://github.com/tienndm/pokemon-api.git
-cd pokemon-api
-```
-
-2. Create and activate virtual environment
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-
-### Starting the server
-
-```bash
-python -m src.main
-```
-
-### API Examples
-
-#### Create a Pokémon
-
-```bash
-curl -X POST http://localhost:8000/pokemon \
-  -H "Content-Type: application/json" \
-  -d '{
-    "no": "025",
-    "name": "Pikachu",
-    "type_name": ["Electric"],
-    "previous_evolution_numbers": ["172"],
-    "next_evolution_numbers": ["026"]
-  }'
-```
-
-#### Get a Pokémon
-
-```bash
-curl http://localhost:8000/pokemon/025
-```
-
-#### Update a Pokémon
-
-```bash
-curl -X PATCH http://localhost:8000/pokemon/025 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Pikachu (Updated)"
-  }'
-```
-
-#### Delete a Pokémon
-
-```bash
-curl -X DELETE http://localhost:8000/pokemon/025
-```
-
-## Development
-
-### Running Tests
-
-```bash
-pytest
-```
-
-### Code Style
-
-This project follows PEP 8 guidelines. Use flake8 and black for linting and formatting:
-
-```bash
-flake8 src tests
-black src tests
-```
-
-## License
-
-MIT
